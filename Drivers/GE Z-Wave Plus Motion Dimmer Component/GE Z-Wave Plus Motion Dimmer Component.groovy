@@ -19,6 +19,7 @@
  *  1.3.3 (03/31/2021)  - Fixed small issue where on/off states weren't made in rare situations
  *  1.3.4 (04/15/2021)  - Fixed defaultDimmerLevel state not populating
  *  1.3.5 (05/24/2021) - Fixed error when setting light timeout to disabled
+ *  20210526 - removed special characters from occupancy status
 */
 
 metadata {
@@ -187,7 +188,7 @@ def zwaveEvent(hubitat.zwave.commands.configurationv2.ConfigurationReport cmd) {
 		    break
 		case 3:
 			name = "operatingMode"
-			value = reportValue == 1 ? "Manual" : reportValue == 2 ? "Vacancy" : reportValue == 3 ? "Occupancy (default)": "error"
+			value = reportValue == 1 ? "Manual" : reportValue == 2 ? "Vacancy" : reportValue == 3 ? "Occupancy": "error"
 			break
 		case 5:
 			name = "Invert Buttons"
@@ -567,9 +568,9 @@ void setLightTimeout(value) {
 }
 
 void Occupancy() {
-	state.operatingMode = "Occupancy (default)"
+	state.operatingMode = "Occupancy"
 	if (!paramWait4Report) {
-		sendEvent([name:"operatingMode", value: "Occupancy (default)", displayed:true])
+		sendEvent([name:"operatingMode", value: "Occupancy", displayed:true])
 	}
 	def cmds = []
 	cmds << zwave.configurationV2.configurationSet(configurationValue: [3] , parameterNumber: 3, size: 1).format()
